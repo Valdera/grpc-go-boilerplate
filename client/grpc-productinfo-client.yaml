@@ -1,14 +1,45 @@
-apiVersion: batch/v1
-kind: Job
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: grpc-productinfo-client
 spec:
-  completions: 5
-  parallelism: 10
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grpc-productinfo-client
   template:
+    metadata:
+      labels:
+        app: grpc-productinfo-client
     spec:
       containers:
         - name: grpc-productinfo-client
-          image: kasunindrasiri/grpc-productinfo-client
-      restartPolicy: Never
-  backoffLimit: 4
+          imagePullPolicy: Never
+          image: grpc-productinfo-client
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 8081
+              name: grpc
+          env:
+            - name: SERVER_HOST
+              value: "productinfo-server"
+            - name: SERVER_PORT
+              value: ":5051"
+            - name: PORT
+              value: ":8081"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: productinfo-client
+spec:
+  selector:
+    app: grpc-productinfo-client
+  ports:
+    - port: 8081
+      targetPort: 8081
+      name: grpc
+  type: NodePort

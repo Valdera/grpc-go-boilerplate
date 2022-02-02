@@ -12,5 +12,5 @@ spec:
       http:
         paths:
           - backend:
-              serviceName: productinfo
+              serviceName: productinfo-client
               servicePort: grpc

@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"os"
 
 	gw "productinfo/gen/gw/product"
 
@@ -11,11 +12,15 @@ import (
 	"google.golang.org/grpc"
 )
 
-var (
-	// command-line options:
-	// gRPC server endpoint
-	grpcServerEndpoint = "localhost:50051"
-)
+var grpcServerEndpoint string
+var port string
+
+func init() {
+	port = os.Getenv("PORT")
+
+	grpcServerEndpoint = os.Getenv("SERVER_HOST") + os.Getenv("SERVER_PORT")
+
+}
 
 func main() {
 	ctx := context.Background()
@@ -24,6 +29,8 @@ func main() {
 
 	// Register gRPC server endpoint
 	// Note: Make sure the gRPC server is running properly and accessible
+	print("PORT:", port)
+
 	mux := runtime.NewServeMux()
 	opts := []grpc.DialOption{grpc.WithInsecure()}
 	err := gw.RegisterProductInfoHandlerFromEndpoint(ctx, mux, grpcServerEndpoint, opts)
@@ -31,7 +38,7 @@ func main() {
 		log.Fatalf("Fail to register gRPC service endpoint: %v", err)
 		return
 	}
-	if err := http.ListenAndServe(":8081", mux); err != nil {
+	if err := http.ListenAndServe(port, mux); err != nil {
 		log.Fatalf("Could not setup HTTP endpoint: %v", err)
 	}
 }

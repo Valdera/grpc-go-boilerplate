@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: productinfo-configmap
+  namespace: productinfo
+  labels:
+    app: productinfo
+data:
+  REA_TITLE: Hello, REA!

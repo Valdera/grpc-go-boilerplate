@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log"
 	"net"
+	"os"
 
 	pb "productinfo/gen/pb/product"
 
@@ -15,9 +16,11 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-const (
-	port = ":50051"
-)
+var port string
+
+func init() {
+	port = os.Getenv("PORT")
+}
 
 // server is used to implement ecommerce/product_info.
 type server struct {

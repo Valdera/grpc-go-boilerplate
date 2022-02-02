@@ -29,29 +29,46 @@ test-post:
 test-get:
 	curl http://localhost:8081/v1/product/350cc1d5-833c-11ec-b2d6-7085c2d5cc1a
 
-build-image:
+create-image:
 	docker build -t grpc-productinfo-server -f server/Dockerfile .
 	docker build -t grpc-productinfo-client -f client/Dockerfile .
+
+delete-image:
+	docker image rm grpc-productinfo-server
+	docker image rm grpc-productinfo-client
 
 create-network:
 	docker network create my-net
 
-# run-d-server:
-# 	docker run -it --network=my-net --name=productinfo --hostname=productinfo -p 50051:50051  grpc-productinfo-server
+run-d-server:
+	docker run -it --network=my-net --name=productinfo --hostname=productinfo -p 50051:50051  grpc-productinfo-server
 
-# run-d-client: 
-#     docker run -it --network=my-net --hostname=client grpc-productinfo-client   
+run-d-client: 
+	docker run -it --network=my-net --hostname=client grpc-productinfo-client   
 
-# push-d-registry:
-#     docker image tag grpc-productinfo-server valdera/grpc-productinfo-server
-#     docker image tag grpc-productinfo-client valdera/grpc-productinfo-client
-#     docker image push valdera/grpc-productinfo-server
-#     docker image push valdera/grpc-productinfo-client
+push-d-registry:
+	docker image tag grpc-productinfo-server valdera/grpc-productinfo-server
+	docker image tag grpc-productinfo-client valdera/grpc-productinfo-client
+	docker image push valdera/grpc-productinfo-server
+	docker image push valdera/grpc-productinfo-client
 
-# create-kube:
-# 	kubectl apply -f server/grpc-prodinfo-server.yaml
-# 	kubectl apply -f client/grpc-prodinfo-client-job.yaml
-# 	kubectl get pods
+create-kube:
+	kubectl apply -f server/grpc-productinfo-server.yaml
+	kubectl apply -f client/grpc-productinfo-client.yaml
+	kubectl apply -f ingress/grpc-prodinfo-ingress.yaml
+	kubectl get pods
 
+delete-kube:
+	kubectl delete -f server/grpc-productinfo-server.yaml
+	kubectl delete -f client/grpc-productinfo-client.yaml
+	kubectl delete -f ingress/grpc-prodinfo-ingress.yaml
+	kubectl get pods
 
+test-kube-post:
+	curl -X POST http://productinfo/v1/product -d '{"name": "Apple", "description": "iphone7", "price": 699}'
 
+test-kube-get:
+	curl http://localhost:8081/v1/product/350cc1d5-833c-11ec-b2d6-7085c2d5cc1a
+
+port-forward:
+	kubectl port-forward service/productinfo-client 8081:8081
