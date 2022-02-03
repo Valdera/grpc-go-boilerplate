@@ -36,10 +36,10 @@ kind: Service
 metadata:
   name: productinfo-client
 spec:
+  type: LoadBalancer
   selector:
     app: grpc-productinfo-client
   ports:
     - port: 8081
       targetPort: 8081
       name: grpc
-  type: NodePort

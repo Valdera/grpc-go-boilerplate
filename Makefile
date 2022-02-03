@@ -65,10 +65,10 @@ delete-kube:
 	kubectl get pods
 
 test-kube-post:
-	curl -X POST http://productinfo/v1/product -d '{"name": "Apple", "description": "iphone7", "price": 699}'
+	curl -X POST http://localhost:8081/v1/product -d '{"name": "Apple", "description": "iphone7", "price": 699}'
 
 test-kube-get:
-	curl http://localhost:8081/v1/product/350cc1d5-833c-11ec-b2d6-7085c2d5cc1a
+	curl http://10.1.1.5:8081/v1/product/350cc1d5-833c-11ec-b2d6-7085c2d5cc1a
 
 port-forward:
-	kubectl port-forward service/productinfo-client 8081:8081
+	kubectl port-forward service/productinfo-client 8081:80

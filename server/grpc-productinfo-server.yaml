@@ -32,10 +32,10 @@ kind: Service
 metadata:
   name: productinfo-server
 spec:
+  type: NodePort
   selector:
     app: grpc-productinfo-server
   ports:
     - port: 5051
       targetPort: 5051
       name: grpc
-  type: NodePort
